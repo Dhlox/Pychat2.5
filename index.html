@@ -1,0 +1,99 @@
+</html><html>
+<head>
+	<meta charset="UTF-8">
+	<title>Pychat2.5</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: Arial, sans-serif;
+			background-color: #f1f1f1;
+		}
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+			background-color: #fff;
+			box-shadow: 0 0 10px rgba(0,0,0,0.1);
+		}
+		h1 {
+			text-align: center;
+			margin-bottom: 20px;
+		}
+		#messages {
+			list-style-type: none;
+			padding: 0;
+			margin: 0;
+			height: 300px;
+			overflow: scroll;
+		}
+		#messages li {
+			padding: 5px 10px;
+			background-color: #f9f9f9;
+			border-radius: 5px;
+			margin-bottom: 5px;
+			color: black;
+		}
+		#messages li.useradmin {
+			color: blue;
+		}
+		#messages li:nth-child(odd) {
+			background-color: #999999;
+		}
+		.form {
+			display: flex;
+		}
+		.input {
+			flex: 1;
+		}
+		.button {
+			background-color: #4CAF50;
+			color: #777777;
+			border: none;
+			padding: 10px;
+			margin-left: 10px;
+			cursor: pointer;
+			border-radius: 5px;
+		}
+		.button:hover {
+			background-color: #3e8e41;
+		}
+	</style>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+	<script>
+		// Conectar ao servidor SocketIO
+		var socket = io.connect('http://localhost:5000');
+
+		// Lidar com envio de mensagem
+		function sendMessage() {
+			var input = document.getElementById('message');
+			var message = input.value;
+			input.value = '';
+			socket.emit('message', message);
+			var messages = document.getElementById('messages');
+			var li = document.createElement('li');
+			li.appendChild(document.createTextNode("Você: " + message));
+			li.classList.add("useradmin");
+			messages.appendChild(li);
+		}
+
+		// Lidar com recebimento de mensagem
+		socket.on('message', function(data) {
+			var messages = document.getElementById('messages');
+			var li = document.createElement('li');
+			li.appendChild(document.createTextNode("Outro usuário: " + data));
+			messages.appendChild(li);
+		});
+	</script>
+</head>
+<body>
+	<div class="container">
+		<h1>Chat em tempo real</h1>
+		<ul id="messages"></ul>
+		<div class="form">
+			<input type="text" id="message" class="input" placeholder="Digite sua mensagem...">
+			<button class="button" onclick="sendMessage()">Enviar</button>
+		</div>
+	</div>
+</body>
+</html>
